@@ -1,0 +1,120 @@
+{
+  "info": {
+    "name": "Book Catalogue API (book-api)",
+    "description": "Collection for the Spring Boot library catalogue REST API. Set the baseUrl variable to your server (default http://localhost:8080).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" }
+  ],
+  "item": [
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "List books (paginated)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books?page=0&size=20&sort=id,asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "20" },
+                { "key": "sort", "value": "id,asc" }
+              ]
+            },
+            "description": "200 OK - paginated catalogue with metadata."
+          }
+        },
+        {
+          "name": "Get book by id",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/v1/books/1", "host": ["{{baseUrl}}"], "path": ["api", "v1", "books", "1"] },
+            "description": "200 OK with the book, 404 with an ErrorResponse when missing."
+          }
+        },
+        {
+          "name": "Create book",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Refactoring\",\n  \"author\": \"Martin Fowler\",\n  \"isbn\": \"978-0-13-475759-9\",\n  \"publishedYear\": 2018,\n  \"category\": \"Programming\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/v1/books", "host": ["{{baseUrl}}"], "path": ["api", "v1", "books"] },
+            "description": "201 Created with a Location header. 400 on validation errors, 409 on duplicate ISBN."
+          }
+        },
+        {
+          "name": "Create book (invalid - expect 400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"\",\n  \"author\": \"\",\n  \"isbn\": \"123\",\n  \"publishedYear\": 1800,\n  \"category\": \"\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/v1/books", "host": ["{{baseUrl}}"], "path": ["api", "v1", "books"] }
+          }
+        },
+        {
+          "name": "Create book (duplicate ISBN - expect 409)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Clean Code Copy\",\n  \"author\": \"Robert C. Martin\",\n  \"isbn\": \"9780132350884\",\n  \"publishedYear\": 2008,\n  \"category\": \"Software Engineering\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/v1/books", "host": ["{{baseUrl}}"], "path": ["api", "v1", "books"] }
+          }
+        },
+        {
+          "name": "Update book",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Effective Java (3rd Edition)\",\n  \"author\": \"Joshua Bloch\",\n  \"isbn\": \"9780134685991\",\n  \"publishedYear\": 2018,\n  \"category\": \"Programming\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/v1/books/2", "host": ["{{baseUrl}}"], "path": ["api", "v1", "books", "2"] },
+            "description": "200 OK with the updated book, 404 when missing, 400 on invalid data."
+          }
+        },
+        {
+          "name": "Delete book",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/v1/books/5", "host": ["{{baseUrl}}"], "path": ["api", "v1", "books", "5"] },
+            "description": "204 No Content; repeating or reading the id returns 404."
+          }
+        },
+        {
+          "name": "Invalid sort property (expect 400)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books?sort=banana,asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books"],
+              "query": [{ "key": "sort", "value": "banana,asc" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ops",
+      "item": [
+        { "name": "Health", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/actuator/health", "host": ["{{baseUrl}}"], "path": ["actuator", "health"] } } },
+        { "name": "OpenAPI JSON", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/v3/api-docs", "host": ["{{baseUrl}}"], "path": ["v3", "api-docs"] } } },
+        { "name": "Swagger UI", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/swagger-ui.html", "host": ["{{baseUrl}}"], "path": ["swagger-ui.html"] } } }
+      ]
+    }
+  ]
+}

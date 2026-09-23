@@ -1,0 +1,18 @@
+# =============================================================================
+# Development profile: in-memory H2 with SQL logging and the H2 web console.
+# Activate with: --spring.profiles.active=dev
+# =============================================================================
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    root: INFO
+    edu.ku.bookapi: DEBUG
+    org.hibernate.SQL: DEBUG

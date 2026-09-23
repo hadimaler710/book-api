@@ -1,0 +1,87 @@
+# =============================================================================
+# Base configuration - self-sufficient defaults (in-memory H2), overridden by
+# the profile-specific files (application-dev.yml / application-prod.yml).
+#
+# Activate a profile with:
+#   --spring.profiles.active=dev    (or prod)
+#   or the SPRING_PROFILES_ACTIVE environment variable
+# =============================================================================
+spring:
+  application:
+    name: book-api
+
+  # Default profile when none is requested explicitly
+  profiles:
+    default: dev
+
+  datasource:
+    url: jdbc:h2:mem:bookdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  # H2 web console (path /h2-console) - only enabled in the dev profile
+  h2:
+    console:
+      enabled: false
+
+  data:
+    web:
+      pageable:
+        default-page-size: 20
+        max-page-size: 100
+
+  jackson:
+    # Omit null fields (e.g. validationErrors) from JSON responses
+    default-property-inclusion: non_null
+
+server:
+  port: 8080
+
+# OpenAPI 3 / Swagger UI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+# Actuator (monitoring)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,caches
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# Application-specific, type-safe settings (see BookProperties)
+book-api:
+  seed:
+    enabled: true
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+      - http://localhost:4200
+      - http://localhost:5173
+  rate-limit:
+    enabled: false
+    limit: 100
+    window-seconds: 60
+  cache:
+    time-to-live: 5m
+    maximum-size: 1000
+
+logging:
+  level:
+    root: INFO
+    edu.ku.bookapi: DEBUG

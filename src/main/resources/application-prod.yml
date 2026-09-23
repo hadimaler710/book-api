@@ -1,0 +1,38 @@
+# =============================================================================
+# Production profile: file-based H2 (replaceable via environment variables),
+# no console, no demo data, rate limiting on.
+#
+# Sensitive settings are externalized - override with environment variables:
+#   BOOK_API_DATASOURCE_URL, BOOK_API_DATASOURCE_USERNAME, BOOK_API_DATASOURCE_PASSWORD
+# Activate with: --spring.profiles.active=prod
+# =============================================================================
+spring:
+  datasource:
+    url: ${BOOK_API_DATASOURCE_URL:jdbc:h2:file:./data/bookdb}
+    username: ${BOOK_API_DATASOURCE_USERNAME:sa}
+    password: ${BOOK_API_DATASOURCE_PASSWORD:}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+  h2:
+    console:
+      enabled: false
+
+logging:
+  level:
+    root: WARN
+    edu.ku.bookapi: INFO
+
+book-api:
+  seed:
+    enabled: false
+  rate-limit:
+    enabled: true
+
+management:
+  endpoint:
+    health:
+      show-details: never
